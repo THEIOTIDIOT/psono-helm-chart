@@ -11,10 +11,10 @@ If you had already added this repo earlier, run `helm repo update` to retrieve
 the latest versions of the packages.  You can then run `helm search repo
 theiotidiot` to see the charts.
 
-To install the psono-combo chart:
+To install the psono chart:
 
-    helm install my-psono-combo theiotidiot/psono-combo
+    helm install my-psono theiotidiot/psono
 
 To uninstall the chart:
 
-    helm delete my-psono-combo
+    helm delete my-psono

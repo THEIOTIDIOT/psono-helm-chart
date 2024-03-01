@@ -1,0 +1,148 @@
+# Default values for psono.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  # change to "psono/psono-combo-enterprise" if you want the enterprise edition
+  repository: psono/psono-combo
+  # Overrides the image tag whose default is the chart appVersion. Should be adjusted if you use the enterprise edition
+  # as the enterprise edition follows a different versioning
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  env:
+    # generate the following six parameters with the following command
+    # docker run --rm -ti psono/psono-server:latest python3 ./psono/manage.py generateserverkeys
+    # These parameters should ideally be stored as secrets e.g.
+    # https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
+    PSONO_SECRET_KEY: ''
+    PSONO_ACTIVATION_LINK_SECRET: ''
+    PSONO_DB_SECRET: ''
+    PSONO_EMAIL_SECRET_SALT: '.'
+    PSONO_PRIVATE_KEY: ''
+    PSONO_PUBLIC_KEY: ''
+
+    # The config details for your database. These parameters should ideally be stored as secrets e.g.
+    # https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
+    PSONO_DATABASES_DEFAULT_NAME: ''
+    PSONO_DATABASES_DEFAULT_USER: ''
+    PSONO_DATABASES_DEFAULT_PASSWORD: ''
+    PSONO_DATABASES_DEFAULT_HOST: ''
+
+    PSONO_HOST_URL: 'https://demo.psono.com/server'
+    PSONO_DEBUG: 'False'
+    PSONO_ALLOWED_HOSTS: '*'
+    PSONO_MANAGEMENT_ENABLED: 'True'
+    PSONO_FILESERVER_HANDLER_ENABLED: 'False'
+    PSONO_FILES_ENABLED: 'False'
+    PSONO_ALLOW_USER_SEARCH_BY_USERNAME_PARTIAL: 'False'
+    PSONO_ALLOW_USER_SEARCH_BY_EMAIL: 'False'
+    PSONO_ALLOW_REGISTRATION: 'True'
+    PSONO_ENFORCE_MATCHING_USERNAME_AND_EMAIL: 'False'
+    PSONO_ALLOWED_DOMAINS: 'psono.com'
+    PSONO_EMAIL_FROM: 'psono@psono.com'
+    PSONO_EMAIL_HOST: 'mail.psono.svc'
+    PSONO_EMAIL_PORT: '587'
+    PSONO_EMAIL_USE_TLS: 'False'
+    PSONO_EMAIL_USE_SSL: 'False'
+    PSONO_EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
+    PSONO_WEBCLIENT_CONFIG_JSON: |
+      {
+        "backend_servers": [{
+          "title": "psono.pw",
+          "domain": "psono.com",
+          "url": "https://demo.psono.com/server"
+        }],
+        "base_url": "https://demo.psono.com/",
+        "allow_custom_server": true,
+        "allow_registration": true,
+        "allow_lost_password": true,
+        "disable_download_bar": false,
+        "authentication_methods": ["AUTHKEY"]
+      }
+    PSONO_PORTAL_CONFIG_JSON: |
+      {
+        "backend_servers": [{
+          "title": "psono.pw",
+          "domain": "psono.com",
+          "url": "https://demo.psono.com/server"
+        }],
+        "base_url": "https://demo.psono.com/",
+        "allow_custom_server": true,
+        "allow_registration": true,
+        "allow_lost_password": true,
+        "disable_download_bar": false,
+        "authentication_methods": ["AUTHKEY"]
+      }
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
